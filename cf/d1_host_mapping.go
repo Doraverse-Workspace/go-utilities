@@ -40,16 +40,16 @@ func NewD1HostMapping(ctx context.Context, apiToken, dbID, accID string) (*D1Hos
 	ins := &D1HostMapping{
 		db: db,
 	}
-	go func() {
-		_, err := ins.db.Raw(ctx, initTableSQL)
-		if err != nil {
-			log.Printf("[cf: d1 host mapping] failed to init table: %v", err)
-		}
-		_, err = ins.db.Raw(ctx, initIndexSQL)
-		if err != nil {
-			log.Printf("[cf: d1 host mapping] failed to init index: %v", err)
-		}
-	}()
+	_, err := ins.db.Raw(ctx, initTableSQL)
+	if err != nil {
+		log.Printf("[cf: d1 host mapping] failed to init table: %v", err)
+		return nil, err
+	}
+	_, err = ins.db.Raw(ctx, initIndexSQL)
+	if err != nil {
+		log.Printf("[cf: d1 host mapping] failed to init index: %v", err)
+		return nil, err
+	}
 
 	return ins, nil
 }
