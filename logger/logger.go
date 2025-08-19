@@ -70,3 +70,7 @@ func mergeFields(fields ...Fields) Fields {
 	}
 	return result
 }
+
+func AddHook(hook logrus.Hook) {
+	l.AddHook(hook)
+}
