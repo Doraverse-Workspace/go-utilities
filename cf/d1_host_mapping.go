@@ -32,6 +32,7 @@ const (
 	initIndexSQL = `CREATE INDEX IF NOT EXISTS idx_host_mappings ON host_mappings(host)`
 	insertSQL    = `INSERT INTO host_mappings (host, cluster_ip, cluster_code) VALUES (?, ?, ?)`
 	selectSQL    = `SELECT host, cluster_ip, cluster_code FROM host_mappings WHERE host = ?`
+	deleteSQL    = `DELETE FROM host_mappings WHERE host = ?`
 )
 
 func NewD1HostMapping(ctx context.Context, apiToken, dbID, accID string) (*D1HostMapping, error) {
@@ -86,6 +87,14 @@ func (h *D1HostMapping) InsertHostMapping(ctx context.Context, record HostMappin
 		return errors.New("cf: d1 host mapping: host or cluster ip is empty")
 	}
 	_, err := h.db.Raw(ctx, insertSQL, record.Host, record.ClusterIP, record.ClusterCode)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *D1HostMapping) DeleteHostMapping(ctx context.Context, host string) error {
+	_, err := h.db.Raw(ctx, deleteSQL, host)
 	if err != nil {
 		return err
 	}
